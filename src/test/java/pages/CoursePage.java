@@ -1,5 +1,6 @@
 package pages;
 
+import annotations.UrlPrefix;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Slf4j
+@UrlPrefix("/")
 public class CoursePage extends BasePage {
     protected final String BASE_URL = "https://otus.ru";
 
@@ -89,12 +91,15 @@ public class CoursePage extends BasePage {
     }
 
 
-    public CoursePage clickCourseWithName(String courseName) throws InterruptedException {
+    public CoursePage clickCourseWithName(String courseName) {
         Actions actions = new Actions(driver);
         if (courseName != null) {
             log.info("Клик по курсу {}", courseName);
             WebElement course = searchCourseByName(courseName);
+            System.out.println(course.getText());
+            System.out.println(course);
             actions.moveToElement(course);
+            course.click();
         }
         return this;
     }
