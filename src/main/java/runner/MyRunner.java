@@ -1,6 +1,8 @@
 package runner;
 
 import annotations.Driver;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import driver.WebDriverFactory;
 import listeners.MouseListener;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +26,12 @@ import java.util.concurrent.TimeUnit;
 public class MyRunner extends Runner {
 
     private final Class testClass;
+    private final Injector injector;
 
     public MyRunner(Class testClass) {
         super();
         this.testClass = testClass;
+        this.injector = Guice.createInjector(new BinderModule());
     }
 
     private EventFiringWebDriver driver = null;
@@ -59,9 +63,9 @@ public class MyRunner extends Runner {
 
     @Override
     public void run(RunNotifier notifier) {
-        log.info("running the tests from MyRunner: " + testClass);
+        log.info("running tests from MyRunner: " + testClass);
         try {
-            Object testObject = testClass.getDeclaredConstructor().newInstance();
+            Object testObject = injector.getInstance(testClass);
             for (Method method : testClass.getMethods()) {
                 if (method.isAnnotationPresent(Test.class)) {
                     setUp(testObject);

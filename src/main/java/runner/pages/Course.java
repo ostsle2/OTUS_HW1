@@ -1,4 +1,4 @@
-package pages;
+package runner.pages;
 
 import java.time.LocalDate;
 

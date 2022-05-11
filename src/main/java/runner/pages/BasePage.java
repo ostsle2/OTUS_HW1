@@ -1,6 +1,9 @@
-package pages;
+package runner.pages;
 
 import annotations.UrlPrefix;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.WebDriver;

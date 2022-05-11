@@ -1,6 +1,8 @@
-package pages;
+package runner.pages;
 
 import annotations.UrlPrefix;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -18,8 +20,8 @@ import java.util.Locale;
 public class CoursePage extends BasePage {
     protected final String BASE_URL = "https://otus.ru";
 
-
-    public CoursePage(EventFiringWebDriver driver) {
+    @Inject
+    public CoursePage(@Assisted EventFiringWebDriver driver) {
         super(driver);
     }
 
