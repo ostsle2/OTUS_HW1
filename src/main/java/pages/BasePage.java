@@ -1,26 +1,31 @@
-package runner.pages;
+package pages;
 
 import annotations.UrlPrefix;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import com.google.inject.assistedinject.AssistedInject;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.events.EventFiringWebDriver;
+import support.GuiceScoped;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Locale;
 
 public abstract class BasePage<T> {
-    EventFiringWebDriver driver;
 
-    public BasePage(final EventFiringWebDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
+    protected GuiceScoped guiceScoped;
+    private String path;
+
+    public BasePage(GuiceScoped guiceScoped, String path) {
+        this.guiceScoped = guiceScoped;
+        this.path = path;
+        PageFactory.initElements(guiceScoped.driver, this);
     }
 
+    @FindBy(tagName = "h1")
+    private WebElement header;
 
     private String getBaseUrl() {
         return StringUtils.stripEnd(System.getProperty("webdriver.base.url"), "/");
@@ -36,7 +41,7 @@ public abstract class BasePage<T> {
     }
 
     public T open() {
-        driver.get(getBaseUrl() + getUrlPrefix());
+        guiceScoped.driver.get(getBaseUrl() + getUrlPrefix());
         return (T) this;
     }
 
@@ -44,7 +49,7 @@ public abstract class BasePage<T> {
         try {
             Constructor<Page> constructor = clazz.getConstructor(WebDriver.class);
 
-            return convertInstanceOfObject(constructor.newInstance(driver), clazz);
+            return convertInstanceOfObject(constructor.newInstance(guiceScoped.driver), clazz);
 
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
@@ -62,11 +67,17 @@ public abstract class BasePage<T> {
     }
 
     public void checkTitle(String expectedValue) {
-        String actualTitle = this.getPageTitle();
-        Assertions.assertEquals(expectedValue, actualTitle);
+        String actualTitle = this.getPageTitle().toLowerCase(Locale.ROOT);
+        Assertions.assertTrue(actualTitle.contains(expectedValue));
     }
 
     public String getPageTitle() {
-        return driver.getTitle();
+        return guiceScoped.driver.getTitle();
+    }
+
+    public T pageHeaderShouldBeSameAs(String header) {
+        assert this.header.getText().equals(header) : "Error: Заголовок на странице не корректный";
+
+        return (T) this;
     }
 }

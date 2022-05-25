@@ -1,7 +1,6 @@
-package runner.pages;
+package pages;
 
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-import runner.MainPage;
 
 import javax.inject.Named;
 
