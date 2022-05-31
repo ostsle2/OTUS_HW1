@@ -1,15 +1,11 @@
 package com.otus.steps.pages;
 
 import com.google.inject.Inject;
-//import com.otus.driver.DriverFactory;
-import io.cucumber.java.ru.Если;
-import listeners.MouseListener;
-import org.openqa.selenium.support.events.EventFiringWebDriver;
-import support.GuiceScoped;
 import driver.WebDriverFactory;
 import io.cucumber.java.ru.Пусть;
 import io.cucumber.java.ru.Тогда;
 import pages.MainPage;
+import support.GuiceScoped;
 
 public class MainPageSteps {
 
@@ -32,6 +28,4 @@ public class MainPageSteps {
     public void pageShouldBeOpened(String expectedHeader) {
         mainPage.pageHeaderShouldBeSameAs(expectedHeader);
     }
-
-
 }

@@ -1,14 +1,12 @@
 package driver;
 
 import com.google.inject.Inject;
-import support.GuiceScoped;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-
-import java.util.Locale;
+import support.GuiceScoped;
 
 public class WebDriverFactory implements IDriverFactory {
     public GuiceScoped guiceScoped;

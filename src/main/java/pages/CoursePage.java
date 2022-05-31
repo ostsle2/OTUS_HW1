@@ -22,7 +22,7 @@ public class CoursePage extends BasePage {
 
     @Inject
     public CoursePage(GuiceScoped guiceScoped) {
-        super(guiceScoped, "");
+        super(guiceScoped, "/lessons");
     }
 
     public CoursePage openCoursePage() {

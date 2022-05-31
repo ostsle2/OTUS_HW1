@@ -13,6 +13,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public abstract class BasePage<T> {
 
     protected GuiceScoped guiceScoped;
@@ -76,7 +78,9 @@ public abstract class BasePage<T> {
     }
 
     public T pageHeaderShouldBeSameAs(String header) {
-        assert this.header.getText().equals(header) : "Error: Заголовок на странице не корректный";
+        assertThat(this.header.getText())
+                .as("Заголовок на странице %s: ", this.header.getText())
+                .isEqualTo(header);
 
         return (T) this;
     }
