@@ -5,6 +5,7 @@ import support.GuiceScoped;
 
 public abstract class BaseComponent<T> {
 
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     protected GuiceScoped guiceScoped;
 
     public BaseComponent(GuiceScoped guiceScoped) {

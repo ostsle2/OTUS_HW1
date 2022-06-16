@@ -47,13 +47,14 @@ public abstract class BasePage<T> {
         return (T) this;
     }
 
-    public <Page> Page page(final Class<Page> clazz) {
+    public <T> T page(final Class<T> clazz) {
         try {
-            Constructor<Page> constructor = clazz.getConstructor(WebDriver.class);
+            Constructor<T> constructor = clazz.getConstructor(WebDriver.class);
 
             return convertInstanceOfObject(constructor.newInstance(guiceScoped.driver), clazz);
 
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch
+        (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
         }
 

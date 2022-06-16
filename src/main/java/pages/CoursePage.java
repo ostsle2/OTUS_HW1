@@ -18,24 +18,26 @@ import java.util.Random;
 @Slf4j
 @UrlPrefix("/")
 public class CoursePage extends BasePage {
-    protected final String BASE_URL = "https://otus.ru";
 
     @Inject
     public CoursePage(GuiceScoped guiceScoped) {
         super(guiceScoped, "/lessons");
     }
 
-    public CoursePage openCoursePage() {
-        guiceScoped.driver.get(BASE_URL);
-        return this;
-    }
 
     private List<Course> parseCourses() {
         List<Course> courseBlocks = new ArrayList<>();
-        List<WebElement> courseBlockWebElements = guiceScoped.driver.findElements((By.xpath("//div[@class = 'lessons__new-item-container' and not(descendant::div[contains(text(),'О дате старта будет объявлено позже') or contains(text(), 'В ')])]")));
+        List<WebElement> courseBlockWebElements = guiceScoped.driver.findElements((By.xpath(
+                "//div[@class = 'lessons__new-item-container' and not(descendant::div[contains(text(),"
+                        + "'О дате старта будет объявлено позже') or contains(text(), 'В ')])]")));
         for (WebElement courseBlockWebElem : courseBlockWebElements) {
-            String name = courseBlockWebElem.findElement((By.xpath(".//div[contains(@class, 'lessons__new-item-title')]"))).getText().trim();
-            String startDateText = courseBlockWebElem.findElement((By.xpath(".//div[@class = 'lessons__new-item-start'] | .//div[@class = 'lessons__new-item-courses']//following-sibling::div[@class = 'lessons__new-item-time']"))).getText().trim();
+            String name =
+                    courseBlockWebElem.findElement((By.xpath(".//div[contains(@class, 'lessons__new-item-title')]")))
+                            .getText().trim();
+            String startDateText = courseBlockWebElem.findElement((By.xpath(
+                            ".//div[@class = 'lessons__new-item-start'] | .//div[@class = 'lessons__new-item-courses']"
+                                    + "//following-sibling::div[@class = 'lessons__new-item-time']")))
+                    .getText().trim();
             LocalDate startDate = parseStringToDate(startDateText);
             Course courseBlock = new Course(name, startDate);
             courseBlocks.add(courseBlock);
@@ -80,7 +82,9 @@ public class CoursePage extends BasePage {
             if (courseWebElement.size() > 1) {
                 Random rand = new Random();
                 return courseWebElement.get(rand.nextInt(courseWebElement.size()));
-            } else return courseWebElement.get(0);
+            } else {
+                return courseWebElement.get(0);
+            }
 
         } catch (Exception e) {
             throw new RuntimeException("Unable to find course");

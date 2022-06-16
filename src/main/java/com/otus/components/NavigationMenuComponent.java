@@ -23,8 +23,10 @@ public class NavigationMenuComponent extends BaseComponent<NavigationMenuCompone
 
     public PreparatoryCoursesPage clickToElementInDropdown(String contextName, String courseName) {
         Actions actions = new Actions(guiceScoped.driver);
-        WebElement webContextName = guiceScoped.driver.findElement(By.xpath(String.format("//p[contains(text(),'%s')]", contextName)));
-        WebElement webCourseName = guiceScoped.driver.findElement(By.xpath(String.format(".//a[@title='%s']", courseName)));
+        WebElement webContextName =
+                guiceScoped.driver.findElement(By.xpath(String.format("//p[contains(text(),'%s')]", contextName)));
+        WebElement webCourseName =
+                guiceScoped.driver.findElement(By.xpath(String.format(".//a[@title='%s']", courseName)));
         actions.moveToElement(webContextName).click();
         actions.moveToElement(webCourseName).click();
         return new PreparatoryCoursesPage(guiceScoped);

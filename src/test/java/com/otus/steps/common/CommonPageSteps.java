@@ -13,8 +13,8 @@ public class CommonPageSteps {
     @Но("URL страницы содержит {string}")
     public void urlPageShouldBeContains(String courseName) {
         String currentPageUrl = guiceScoped.driver.getCurrentUrl();
-        Assertions.assertTrue(currentPageUrl.contains(courseName), "Текущий URL страницы не содержит ожидаемое значение");
+        Assertions.assertTrue(currentPageUrl.contains(courseName),
+                "Текущий URL страницы не содержит ожидаемое значение");
     }
-
-
 }
+

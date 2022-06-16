@@ -13,5 +13,4 @@ public class CategoryLessonPageSteps {
     public void pageHeaderShouldBeSameAs(String expectedHeader) {
         categoryLessonsPage.pageHeaderShouldBeSameAs(expectedHeader);
     }
-
 }
