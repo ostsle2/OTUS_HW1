@@ -1,41 +1,43 @@
-package runner.pages;
+package pages;
 
 import annotations.UrlPrefix;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.events.EventFiringWebDriver;
+import support.GuiceScoped;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 @Slf4j
 @UrlPrefix("/")
 public class CoursePage extends BasePage {
-    protected final String BASE_URL = "https://otus.ru";
 
     @Inject
-    public CoursePage(@Assisted EventFiringWebDriver driver) {
-        super(driver);
+    public CoursePage(GuiceScoped guiceScoped) {
+        super(guiceScoped, "/lessons");
     }
 
-    public CoursePage openCoursePage() {
-        driver.get(BASE_URL);
-        return this;
-    }
 
     private List<Course> parseCourses() {
         List<Course> courseBlocks = new ArrayList<>();
-        List<WebElement> courseBlockWebElements = driver.findElements((By.xpath("//div[@class = 'lessons__new-item-container' and not(descendant::div[contains(text(),'О дате старта будет объявлено позже') or contains(text(), 'В ')])]")));
+        List<WebElement> courseBlockWebElements = guiceScoped.driver.findElements((By.xpath(
+                "//div[@class = 'lessons__new-item-container' and not(descendant::div[contains(text(),"
+                        + "'О дате старта будет объявлено позже') or contains(text(), 'В ')])]")));
         for (WebElement courseBlockWebElem : courseBlockWebElements) {
-            String name = courseBlockWebElem.findElement((By.xpath(".//div[contains(@class, 'lessons__new-item-title')]"))).getText().trim();
-            String startDateText = courseBlockWebElem.findElement((By.xpath(".//div[@class = 'lessons__new-item-start'] | .//div[@class = 'lessons__new-item-courses']//following-sibling::div[@class = 'lessons__new-item-time']"))).getText().trim();
+            String name =
+                    courseBlockWebElem.findElement((By.xpath(".//div[contains(@class, 'lessons__new-item-title')]")))
+                            .getText().trim();
+            String startDateText = courseBlockWebElem.findElement((By.xpath(
+                            ".//div[@class = 'lessons__new-item-start'] | .//div[@class = 'lessons__new-item-courses']"
+                                    + "//following-sibling::div[@class = 'lessons__new-item-time']")))
+                    .getText().trim();
             LocalDate startDate = parseStringToDate(startDateText);
             Course courseBlock = new Course(name, startDate);
             courseBlocks.add(courseBlock);
@@ -68,18 +70,22 @@ public class CoursePage extends BasePage {
         return LocalDate.parse(newDate, dateTimeFormatter);
     }
 
-
     private WebElement searchCourseByName(String courseName) {
-        WebElement courseWebElement = null;
+        List<WebElement> courseWebElement = new ArrayList<>();
         try {
-            List<WebElement> courseNames = driver.findElements((By.xpath("//div[@class = 'lessons']/a")));
+            List<WebElement> courseNames = guiceScoped.driver.findElements((By.xpath("//div[@class = 'lessons']/a")));
             for (WebElement course : courseNames) {
                 if (course.getText().contains(courseName)) {
-                    courseWebElement = course;
-                    break;
+                    courseWebElement.add(course);
                 }
             }
-            return courseWebElement;
+            if (courseWebElement.size() > 1) {
+                Random rand = new Random();
+                return courseWebElement.get(rand.nextInt(courseWebElement.size()));
+            } else {
+                return courseWebElement.get(0);
+            }
+
         } catch (Exception e) {
             throw new RuntimeException("Unable to find course");
         }
@@ -94,7 +100,7 @@ public class CoursePage extends BasePage {
 
 
     public CoursePage clickCourseWithName(String courseName) {
-        Actions actions = new Actions(driver);
+        Actions actions = new Actions(guiceScoped.driver);
         if (courseName != null) {
             log.info("Клик по курсу {}", courseName);
             WebElement course = searchCourseByName(courseName);
@@ -108,7 +114,7 @@ public class CoursePage extends BasePage {
 
 
     public CoursePage clickCourseWithMaxStartDate() {
-        Actions actions = new Actions(driver);
+        Actions actions = new Actions(guiceScoped.driver);
         WebElement course = searchCourseByName(searchCourseBySortDate(false));
         actions.moveToElement(course);
         course.click();
@@ -116,8 +122,38 @@ public class CoursePage extends BasePage {
     }
 
     public CoursePage clickCourseWithMinStartDate() {
-        Actions actions = new Actions(driver);
+        Actions actions = new Actions(guiceScoped.driver);
         WebElement course = searchCourseByName(searchCourseBySortDate(true));
+        actions.moveToElement(course);
+        course.click();
+        return this;
+    }
+
+    public String getCourseByStartDate(LocalDate date) {
+        Course courseBlock = parseCourses().stream().filter(x -> x.getStartDate().equals(date)).findAny().orElse(null);
+        assert courseBlock != null;
+        log.info("Название курса {}", courseBlock.getName());
+        return courseBlock.getName();
+    }
+
+    public String getCourseAfterDate(LocalDate date) {
+        Course courseBlock = parseCourses().stream().filter(x -> x.getStartDate().isAfter(date)).findAny().orElse(null);
+        assert courseBlock != null;
+        log.info("Название курса {}", courseBlock.getName());
+        return courseBlock.getName();
+    }
+
+    public CoursePage clickCourseByDate(LocalDate date) {
+        Actions actions = new Actions(guiceScoped.driver);
+        WebElement course = searchCourseByName(getCourseByStartDate(date));
+        actions.moveToElement(course);
+        course.click();
+        return this;
+    }
+
+    public CoursePage clickCourseAfterDate(LocalDate date) {
+        Actions actions = new Actions(guiceScoped.driver);
+        WebElement course = searchCourseByName(getCourseAfterDate(date));
         actions.moveToElement(course);
         course.click();
         return this;

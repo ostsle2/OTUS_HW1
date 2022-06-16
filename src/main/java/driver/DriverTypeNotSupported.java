@@ -1,6 +1,6 @@
 package driver;
 
-import io.github.bonigarcia.wdm.DriverManagerType;
+import io.github.bonigarcia.wdm.config.DriverManagerType;
 
 public class DriverTypeNotSupported extends Exception {
     public DriverTypeNotSupported(DriverManagerType driverType) {
